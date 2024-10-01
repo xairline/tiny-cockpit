@@ -8,7 +8,7 @@ from layers.com2 import COM2
 def main():
 
     display = Display()
-    display.show("Seraching ...", "", "")
+    display.show("Search for XP ...", "", "")
     print()
     print("====================================")
     xp = XPlaneUdp()
@@ -61,11 +61,12 @@ def main():
                         case "com2":
                             layers["com2"].show(values)
         except Exception as e:
-            print(f"Exception type: {type(e)}")
             if isinstance(e, XPlaneTimeout):
-                display.show("Error", "XP Timeout", "Is Plane loaded?")
+                display.error("Error", "XPlane Timeout", "Is Plane loaded?")
             elif isinstance(e, XPlaneIpNotFound):
-                display.show("Error", "XP not found", "Is XP Running?")
+                display.error("Error", "XPlane not found", "Is XP Running?")
+            else:
+                print(f"Exception type: {type(e)}")
             time.sleep(1)
             continue
 

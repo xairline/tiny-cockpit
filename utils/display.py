@@ -59,3 +59,35 @@ class Display:
         self.disp.image(self.image)
         self.disp.show()
         # time.sleep(0.1)
+
+    def error(self, title, val1, val2):
+        self.draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
+        self.draw.text(
+            (self.x, self.top + 0),
+            f"{title}",
+            font=self.fontTitle,
+            fill=255,
+        )
+        self.draw.text(
+            (self.x, self.top + self.fontSize + 2),
+            f"{val1}",
+            font=self.fontTitle,
+            fill=255,
+        )
+        self.draw.text(
+            (self.x, self.top + self.fontSize * 2),
+            f"----------------------------------------------------------------------------------------------------------------------",
+            font=self.fontTitle,
+            fill=255,
+        )
+        self.draw.text(
+            (self.x, self.top + self.fontSize * 3),
+            f"{val2}",
+            font=self.fontTitle,
+            fill=255,
+        )
+
+        # Display image.
+        self.disp.image(self.image)
+        self.disp.show()
+        # time.sleep(0.1)
