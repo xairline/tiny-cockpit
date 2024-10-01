@@ -221,7 +221,6 @@ class XPlaneUdp:
                     raise XPlaneVersionNotSupported()
 
         except socket.timeout:
-            print("XPlane IP not found.")
             raise XPlaneIpNotFound()
         finally:
             sock.close()
@@ -248,7 +247,6 @@ if __name__ == "__main__":
                 values = xp.GetValues()
                 print(values)
             except XPlaneTimeout:
-                print("XPlane Timeout")
                 exit(0)
 
     except XPlaneVersionNotSupported:
