@@ -1,4 +1,6 @@
 import time
+from layers.stat1 import STAT1
+from layers.stat2 import STAT2
 from utils.XPlaneInstance import XPlaneIpNotFound, XPlaneTimeout, XPlaneUdp
 from utils.display import Display
 from layers.com1 import COM1
@@ -7,8 +9,8 @@ from layers.com2 import COM2
 
 def main():
 
-    display2 = Display(address=0x3D)
-    display = Display(address=0x3C)
+    display = Display(address=0x3D)
+    display2 = Display(address=0x3C)
     display.show("Search for XP ...", "", "")
     display2.show("Search for XP ...", "", "")
     print()
@@ -30,13 +32,14 @@ def main():
             # double display
             layers = {
                 "com": [COM1(xp, display), COM2(xp, display2)],
+                "stats": [STAT1(xp, display), STAT2(xp, display2)],
                 # "nav1": NAV1(display),
                 # "nav2": NAV2(display),
                 # "adf1": ADF1(display),
                 # "adf2": ADF2(display),
             }
             lastValuesHash = 0
-            active_layer = "com"
+            active_layer = "stats"
             print("====================================")
             print(f"X Plane IP: {beacon['IP']}")
             print(f"X Plane Port: {beacon['Port']}")
@@ -63,6 +66,9 @@ def main():
                         case "com":
                             layers["com"][0].show(values)
                             layers["com"][1].show(values)
+                        case "stats":
+                            layers["stats"][0].show(values)
+                            layers["stats"][1].show(values)
         except Exception as e:
             if isinstance(e, XPlaneTimeout):
                 display.error("Error", "XPlane Timeout", "Is Plane loaded?")
