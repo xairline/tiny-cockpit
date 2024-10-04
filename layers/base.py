@@ -4,7 +4,7 @@ class LayerBase:
         self.xp = xp
         self.display = display
 
-    def add_dataref(self, dataref, freq=1):
+    def add_dataref(self, dataref, freq=3):
         self.xp.AddDataRef(dataref, freq)
 
     def show(self, values):

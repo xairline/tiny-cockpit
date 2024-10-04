@@ -1,4 +1,4 @@
-import time
+import threading
 from layers.stat1 import STAT1
 from layers.stat2 import STAT2
 from utils.XPlaneInstance import XPlaneIpNotFound, XPlaneTimeout, XPlaneUdp
@@ -16,29 +16,60 @@ def main():
     print()
     print("====================================")
     xp = XPlaneUdp()
+    # Global variable to store latest values and synchronization lock
+    values_lock = threading.Lock()
+
+    def fetch_values(xp):
+        global latest_values
+        while True:
+            try:
+                values = xp.GetValues()
+
+                # Acquire lock to update the shared values dictionary
+                with values_lock:
+                    latest_values = values
+            except XPlaneTimeout:
+                # Handle XPlaneTimeout if needed
+                pass
+
+    def display_layers():
+        global latest_values
+        lastValuesHash = None
+
+        while True:
+            # Acquire lock to read the shared values safely
+            with values_lock:
+                values = latest_values.copy()
+
+            valuesHash = hash(str(values))
+            if valuesHash == lastValuesHash:
+                # No new data
+                continue
+            else:
+                lastValuesHash = valuesHash
+                # TODO: multiple displays
+                match active_layer:
+                    case "com1":
+                        layers["com1"].show(values)
+                    case "com2":
+                        layers["com2"].show(values)
+                    case "com":
+                        layers["com"][0].show(values)
+                        layers["com"][1].show(values)
+                    case "stats":
+                        layers["stats"][0].show(values)
+                        layers["stats"][1].show(values)
+
+            # Let the display thread run at its own pace, adjust the sleep interval as needed
+            # time.sleep(0.1)
+
     while True:
         try:
             beacon = xp.FindIp()
-            # single display
-            # layers = {
-            #     "com1": COM1(xp, display),
-            #     "com2": COM2(xp, display),
-            #     # "nav1": NAV1(display),
-            #     # "nav2": NAV2(display),
-            #     # "adf1": ADF1(display),
-            #     # "adf2": ADF2(display),
-            # }
-
-            # double display
             layers = {
                 "com": [COM1(xp, display), COM2(xp, display2)],
                 "stats": [STAT1(xp, display), STAT2(xp, display2)],
-                # "nav1": NAV1(display),
-                # "nav2": NAV2(display),
-                # "adf1": ADF1(display),
-                # "adf2": ADF2(display),
             }
-            lastValuesHash = 0
             active_layer = "stats"
             print("====================================")
             print(f"X Plane IP: {beacon['IP']}")
@@ -48,27 +79,15 @@ def main():
             print(f"Active layer: {active_layer}")
             print(f"Layers: {layers}")
             print("Starting main loop")
-            while True:
-                values = xp.GetValues()
-                valuesHash = hash(str(values))
-                if valuesHash == lastValuesHash:
-                    # No new data
-                    # skip this iteration as communication is slow to i2c display
-                    continue
-                else:
-                    lastValuesHash = valuesHash
-                    # TODO: multiple displays
-                    match active_layer:
-                        case "com1":
-                            layers["com1"].show(values)
-                        case "com2":
-                            layers["com2"].show(values)
-                        case "com":
-                            layers["com"][0].show(values)
-                            layers["com"][1].show(values)
-                        case "stats":
-                            layers["stats"][0].show(values)
-                            layers["stats"][1].show(values)
+            # Start the value fetching thread
+            fetch_thread = threading.Thread(target=fetch_values, args=(xp,))
+            fetch_thread.daemon = (
+                True  # Daemon thread will exit when the main program exits
+            )
+            fetch_thread.start()
+
+            # Display layers (runs in the main thread)
+            display_layers()
         except Exception as e:
             if isinstance(e, XPlaneTimeout):
                 display.error("Error", "XPlane Timeout", "Is Plane loaded?")
@@ -78,7 +97,6 @@ def main():
                 display2.error("Error", "XPlane Timeout", "Is Plane loaded?")
             else:
                 print(f"Exception type: {type(e)}")
-            time.sleep(1)
             continue
 
 

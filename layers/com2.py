@@ -4,13 +4,13 @@ from layers.base import LayerBase
 class COM2(LayerBase):
     def __init__(self, xp, display):
         super().__init__("COM2", xp, display)
-        self.add_dataref("sim/cockpit2/radios/actuators/com2_frequency_hz_833", freq=20)
+        self.add_dataref("sim/cockpit2/radios/actuators/com2_frequency_hz_833", freq=3)
         self.add_dataref(
-            "sim/cockpit2/radios/actuators/com2_standby_frequency_hz_833", freq=20
+            "sim/cockpit2/radios/actuators/com2_standby_frequency_hz_833", freq=3
         )
-        self.add_dataref("sim/cockpit2/radios/actuators/com2_frequency_hz_833", freq=20)
+        self.add_dataref("sim/cockpit2/radios/actuators/com2_frequency_hz_833", freq=3)
         self.add_dataref(
-            "sim/cockpit2/radios/actuators/com2_standby_frequency_hz_833", freq=20
+            "sim/cockpit2/radios/actuators/com2_standby_frequency_hz_833", freq=3
         )
 
     def show(self, values):
