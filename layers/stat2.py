@@ -2,23 +2,21 @@ from layers.base import LayerBase
 
 
 class STAT2(LayerBase):
+    NAME = "STAT2"
+    DATAREF_HEADING = "sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot"
+    DATAREF_AIRSPEED = "sim/flightmodel/position/indicated_airspeed"
+
     def __init__(self, xp, display):
-        super().__init__("STAT2", xp, display)
-        self.add_dataref(
-            "sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", freq=3
-        )
-        self.add_dataref("sim/flightmodel/position/indicated_airspeed", freq=3)
+        super().__init__(self.NAME, xp, display)
+        self.add_dataref(self.DATAREF_HEADING, freq=5)
+        self.add_dataref(self.DATAREF_AIRSPEED, freq=5)
 
     def show(self, values):
         try:
-            hdg = (
-                values["sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot"]
-                / 1000
-            )
-            ias = values["sim/flightmodel/position/indicated_airspeed"] / 1000
-            title = "STAT2"
+            hdg = values[self.DATAREF_HEADING] / 1000
+            ias = values[self.DATAREF_AIRSPEED] / 1000
             self.display.show(
-                title,
+                self.NAME,
                 "HDG:   " + f"{hdg:.0f}",
                 "IAS:    " + f"{ias:.0f}",
             )

@@ -239,8 +239,8 @@ if __name__ == "__main__":
         print(beacon)
         print()
 
-        xp.AddDataRef("sim/flightmodel/position/indicated_airspeed", freq=30)
-        xp.AddDataRef("sim/flightmodel/position/latitude", freq=30)
+        xp.AddDataRef("sim/flightmodel/position/indicated_airspeed", freq=50)
+        xp.AddDataRef("sim/flightmodel/position/latitude", freq=50)
 
         while True:
             try:
