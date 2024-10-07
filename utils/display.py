@@ -60,6 +60,10 @@ class Display:
         self.disp.show()
         # time.sleep(0.1)
 
+    def clear(self):
+        self.disp.fill(0)
+        self.disp.show()
+
     def error(self, title, val1, val2):
         self.draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
         self.draw.text(

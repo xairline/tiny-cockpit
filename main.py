@@ -26,8 +26,7 @@ def main():
                 values = xp.GetValues()
 
                 # Acquire lock to update the shared values dictionary
-                with values_lock:
-                    latest_values = values
+                latest_values = values
             except XPlaneTimeout:
                 # Handle XPlaneTimeout if needed
                 pass
@@ -38,8 +37,7 @@ def main():
 
         while True:
             # Acquire lock to read the shared values safely
-            with values_lock:
-                values = latest_values.copy()
+            values = latest_values.copy()
 
             valuesHash = hash(str(values))
             if valuesHash == lastValuesHash:
@@ -88,6 +86,12 @@ def main():
 
             # Display layers (runs in the main thread)
             display_layers()
+        except KeyboardInterrupt:
+            print("\nProcess interrupted by user (Ctrl+C)")
+            display.clear()
+            display2.clear()
+            # Exit the program
+            exit(0)
         except Exception as e:
             if isinstance(e, XPlaneTimeout):
                 display.error("Error", "XPlane Timeout", "Is Plane loaded?")
