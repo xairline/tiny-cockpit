@@ -25,7 +25,7 @@ class Display:
         self.fontData = ImageFont.truetype(
             "/usr/share/fonts/truetype/DSEG7ModernMini-Regular.ttf", self.fontSize + 2
         )
-        self.fontSeparator = ImageFont.load_default(4)
+        self.fontSeparator = ImageFont.load_default()
         self.padding = -2
         self.top = self.padding
         self.bottom = self.height - self.padding
