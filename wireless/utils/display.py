@@ -28,7 +28,7 @@ class Display:
         # Move left to right keeping track of the current x position for drawing shapes.
         self.x = 0
 
-    def show(self, title, val1, val2):
+    def show(self, title, val1, val2=None):
         self.draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
         self.draw.text(
             (self.x, self.top + 0),
@@ -39,21 +39,26 @@ class Display:
         self.draw.text(
             (self.x, self.top + self.fontSize),
             f"{val1}",
-            font=self.fontData,
+            font=(
+                self.fontData
+                if val2
+                else ImageFont.load_default(size=self.fontSize * 2.5 + 2)
+            ),
             fill=255,
         )
-        self.draw.text(
-            (self.x, self.top + self.fontSize * 2 + 6),
-            f"----------------------------------------------------------------------------------------------------------------------",
-            font=self.fontSeparator,
-            fill=255,
-        )
-        self.draw.text(
-            (self.x, self.top + self.fontSize * 3 - 6),
-            f"{val2}",
-            font=self.fontData,
-            fill=255,
-        )
+        if val2:
+            self.draw.text(
+                (self.x, self.top + self.fontSize * 2 + 6),
+                f"----------------------------------------------------------------------------------------------------------------------",
+                font=self.fontSeparator,
+                fill=255,
+            )
+            self.draw.text(
+                (self.x, self.top + self.fontSize * 3 - 6),
+                f"{val2}",
+                font=self.fontData,
+                fill=255,
+            )
 
         # Display image.
         self.disp.image(self.image)

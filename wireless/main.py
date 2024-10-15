@@ -5,6 +5,8 @@ from utils.XPlaneInstance import XPlaneIpNotFound, XPlaneTimeout, XPlaneUdp
 from utils.display import Display
 from layers.com1 import COM1
 from layers.com2 import COM2
+from layers.alt import ALT
+from layers.spd import SPD
 
 
 def main():
@@ -47,16 +49,15 @@ def main():
                 lastValuesHash = valuesHash
                 # TODO: multiple displays
                 match active_layer:
-                    case "com1":
-                        layers["com1"].show(values)
-                    case "com2":
-                        layers["com2"].show(values)
                     case "com":
                         layers["com"][0].show(values)
                         layers["com"][1].show(values)
                     case "stats":
                         layers["stats"][0].show(values)
                         layers["stats"][1].show(values)
+                    case "ap":
+                        layers["ap"][0].show(values)
+                        layers["ap"][1].show(values)
 
             # Let the display thread run at its own pace, adjust the sleep interval as needed
             # time.sleep(0.1)
@@ -67,8 +68,9 @@ def main():
             layers = {
                 "com": [COM1(xp, display), COM2(xp, display2)],
                 "stats": [STAT1(xp, display), STAT2(xp, display2)],
+                "ap": [SPD(xp, display), ALT(xp, display2)],
             }
-            active_layer = "stats"
+            active_layer = "ap"
             print("====================================")
             print(f"X Plane IP: {beacon['IP']}")
             print(f"X Plane Port: {beacon['Port']}")
