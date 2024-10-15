@@ -19,9 +19,13 @@ class Display:
         self.image = Image.new("1", (self.width, self.height))
         self.draw = ImageDraw.Draw(self.image)
         self.fontSize = 16
-        self.fontTitle = ImageFont.load_default(size=self.fontSize)
-        self.fontData = ImageFont.load_default(size=self.fontSize + 2)
-        self.fontSeparator = ImageFont.load_default(size=4)
+        self.fontTitle = ImageFont.truetype(
+            "/usr/share/fonts/truetype/DSEG7ModernMini-Regular.ttf", self.fontSize
+        )
+        self.fontData = ImageFont.truetype(
+            "/usr/share/fonts/truetype/DSEG7ModernMini-Regular.ttf", self.fontSize + 2
+        )
+        self.fontSeparator = ImageFont.load_default(4)
         self.padding = -2
         self.top = self.padding
         self.bottom = self.height - self.padding
