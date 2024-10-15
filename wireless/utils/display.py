@@ -46,7 +46,10 @@ class Display:
             font=(
                 self.fontData
                 if val2
-                else ImageFont.load_default(size=self.fontSize * 2.5 + 2)
+                else ImageFont.truetype(
+                    "/usr/share/fonts/truetype/DSEG7ModernMini-Regular.ttf",
+                    self.fontSize * 2.5 + 2,
+                )
             ),
             fill=255,
         )
