@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 from utils import font
 import st7735
 
-data_padding_left = 25
+data_padding_left = 40
 data_padding_top = 15
 
 

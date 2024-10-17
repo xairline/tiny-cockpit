@@ -7,6 +7,9 @@ from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
 from utils import font
 
+data_padding_left = 40
+data_padding_top = 15
+
 
 class OledDisplay:
     def __init__(self, address=0x3C, msg_buffer=None, buffer_indicator=None):
@@ -56,7 +59,7 @@ class OledDisplay:
                     fill=255,
                 )
                 self.draw.text(
-                    (self.x, self.top + self.fontSize),
+                    (self.x + data_padding_left, self.top + self.fontSize),
                     f"{val1}",
                     font=(
                         ImageFont.truetype(
