@@ -7,8 +7,8 @@ from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
 
 
-class Display:
-    def __init__(self, address=0x3C):
+class OledDisplay:
+    def __init__(self, address=0x3C, msg_buffer=None, buffer_indicator=None):
         self.i2c = busio.I2C(SCL, SDA)
         self.disp = adafruit_ssd1306.SSD1306_I2C(128, 64, self.i2c, addr=address)
         # Clear display.
@@ -20,7 +20,7 @@ class Display:
         self.draw = ImageDraw.Draw(self.image)
         self.fontSize = 16
         self.fontTitle = ImageFont.truetype(
-            "/usr/share/fonts/truetype/DSEG7ModernMini-Regular.ttf", self.fontSize
+            "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf", self.fontSize
         )
         self.fontData = ImageFont.truetype(
             "/usr/share/fonts/truetype/DSEG7ModernMini-Regular.ttf", self.fontSize + 2
@@ -31,46 +31,51 @@ class Display:
         self.bottom = self.height - self.padding
         # Move left to right keeping track of the current x position for drawing shapes.
         self.x = 0
+        self.buffer_indicator = buffer_indicator
+        self.msg_buffer = msg_buffer
+        self.hash = None
 
-    def show(self, title, val1, val2=None):
-        self.draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
-        self.draw.text(
-            (self.x, self.top + 0),
-            f"{title}",
-            font=self.fontTitle,
-            fill=255,
-        )
-        self.draw.text(
-            (self.x, self.top + self.fontSize),
-            f"{val1}",
-            font=(
-                self.fontData
-                if val2
-                else ImageFont.truetype(
-                    "/usr/share/fonts/truetype/DSEG7ModernMini-Regular.ttf",
-                    self.fontSize * 2.5 + 2,
+    def show(self):
+        while True:
+            try:
+                if len(self.msg_buffer) == 0:
+                    continue
+                if self.hash == hash(
+                    self.msg_buffer[self.buffer_indicator]
+                    + self.msg_buffer[self.buffer_indicator + 1]
+                ):
+                    continue
+                self.hash = hash(
+                    self.msg_buffer[self.buffer_indicator]
+                    + self.msg_buffer[self.buffer_indicator + 1]
                 )
-            ),
-            fill=255,
-        )
-        if val2:
-            self.draw.text(
-                (self.x, self.top + self.fontSize * 2 + 6),
-                f"----------------------------------------------------------------------------------------------------------------------",
-                font=self.fontSeparator,
-                fill=255,
-            )
-            self.draw.text(
-                (self.x, self.top + self.fontSize * 3 - 6),
-                f"{val2}",
-                font=self.fontData,
-                fill=255,
-            )
-
-        # Display image.
-        self.disp.image(self.image)
-        self.disp.show()
-        # time.sleep(0.1)
+                title = self.msg_buffer[self.buffer_indicator]
+                val1 = self.msg_buffer[self.buffer_indicator + 1]
+                self.draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
+                self.draw.text(
+                    (self.x, self.top + 0),
+                    f"{title}",
+                    font=self.fontTitle,
+                    fill=255,
+                )
+                self.draw.text(
+                    (self.x, self.top + self.fontSize),
+                    f"{val1}",
+                    font=(
+                        ImageFont.truetype(
+                            "/usr/share/fonts/truetype/DSEG7ModernMini-Regular.ttf",
+                            self.fontSize * 2.5 + 2,
+                        )
+                    ),
+                    fill=255,
+                )
+                # Display image.
+                self.disp.image(self.image)
+                self.disp.show()
+            except Exception as e:
+                print(f"Error: {e}")
+                self.disp.fill(0)
+                self.disp.show()
 
     def clear(self):
         self.disp.fill(0)

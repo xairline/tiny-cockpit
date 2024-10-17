@@ -11,8 +11,11 @@ end
 
 -- POOR_MANS_COCKPIT_LOGGER.dumpTable(COCKPIT)
 
-hid_open(0x1d6b, 0x0104)
-hid_set_nonblocking(COCKPIT, 1)
+success = hid_set_nonblocking(COCKPIT, 1)
+if success < 0 then
+    POOR_MANS_COCKPIT_LOGGER.write_log("Failed to set non-blocking mode")
+    return
+end
 local s = "SPD,your_string_here\n"
 local spd = dataref_table("toliss_airbus/pfdoutputs/general/ap_speed_value")
 local hdg = dataref_table("AirbusFBW/APHDG_Capt")
@@ -29,5 +32,5 @@ function send_hid()
 end
 
 -- POOR_MANS_COCKPIT_LOGGER.dumpTable(buffer)
-do_every_frame('send_hid()')
+-- do_every_frame('send_hid()')
 -- hid_close(COCKPIT)
