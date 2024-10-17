@@ -16,15 +16,35 @@ def send_output_report():
     report_length = 64  # Adjust if necessary
 
     count = 0
+    SPD = 123
+    HDG = 456
+    ALT = 78900
+    VS = 1230
     # Write the report
     while True:
         try:
             count += 1
             if count > 200:
                 count = 0
+                SPD = 123
+                HDG = 456
+                ALT = 78900
+                VS = 1230
+
+            # Determine which variable to modify
+            mod_index = count % 4  # This will cycle through 0 to 3
+
+            if mod_index == 0:
+                SPD += count
+            elif mod_index == 1:
+                HDG += count
+            elif mod_index == 2:
+                ALT += count
+            elif mod_index == 3:
+                VS += count
             # Example data to send (64 bytes)
             report_data = bytes(
-                f"SPD,{123+count},HDG,{456+count},ALT,{78900+count},V/S,+{1230+count}\n",
+                f"SPD,{SPD},HDG,{HDG},ALT,{ALT},V/S,+{VS}\n",
                 "utf-8",
             )
 

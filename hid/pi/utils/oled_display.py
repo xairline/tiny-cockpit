@@ -45,7 +45,6 @@ class OledDisplay:
 
                 title = self.msg_buffer[self.buffer_indicator]
                 val1 = self.msg_buffer[self.buffer_indicator + 1]
-                print(f"Title: {title}, Val1: {val1}")
 
                 # handle title display
                 if self.hash_title == hash(self.msg_buffer[self.buffer_indicator]):

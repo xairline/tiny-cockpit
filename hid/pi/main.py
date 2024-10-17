@@ -49,8 +49,8 @@ def main():
 
     # Wait for the threads to finish
     fetch_thread.join()
-    display3_thread.join()
-    display4_thread.join()
+    # display3_thread.join()
+    # display4_thread.join()
 
 
 if __name__ == "__main__":
