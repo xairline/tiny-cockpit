@@ -24,7 +24,7 @@ def send_output_report():
                 count = 0
             # Example data to send (64 bytes)
             report_data = bytes(
-                f"SPD,{123+count},HDG,{456+count},ALT,{78900+count},V/S,+{1230+count}\n",
+                f"SPD,{123+count},HDG, {456+count},ALT,{78900+count},V/S,+{1230+count}\n",
                 "utf-8",
             )
 

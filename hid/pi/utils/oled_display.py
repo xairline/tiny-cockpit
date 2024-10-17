@@ -59,7 +59,7 @@ class OledDisplay:
                     fill=255,
                 )
                 self.draw.text(
-                    (self.x + data_padding_left, self.top + self.fontSize),
+                    (self.x + data_padding_left, self.top + self.fontSize + 2),
                     f"{val1}",
                     font=(
                         ImageFont.truetype(

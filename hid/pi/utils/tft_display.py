@@ -7,8 +7,8 @@ from PIL import Image, ImageDraw, ImageFont
 from utils import font
 import st7735
 
-data_padding_left = 40
-data_padding_top = 10
+data_padding_left = 45
+data_padding_top = 15
 
 
 class TftDisplay:
