@@ -15,18 +15,25 @@ def send_output_report():
     # Ensure the report length matches your device's expected Output report size
     report_length = 64  # Adjust if necessary
 
-    # Example data to send (64 bytes)
-    report_data = bytes("SPD,123,HDG,456,ALT,789,V/S,123\n", "utf-8")
-
-    # Send the Output report
-    # On macOS, prepend the report ID if required (often 0 for HID devices without report IDs)
-    report_id = 0x00
-    report = bytes([report_id]) + report_data
-
+    count = 0
     # Write the report
     while True:
         try:
+            count += 1
+            if count > 200:
+                count = 0
+            # Example data to send (64 bytes)
+            report_data = bytes(
+                f"SPD,{123+count},HDG,{456+count},ALT,{789+count},V/S,{123+count}\n",
+                "utf-8",
+            )
+
+            # Send the Output report
+            # On macOS, prepend the report ID if required (often 0 for HID devices without report IDs)
+            report_id = 0x00
+            report = bytes([report_id]) + report_data
             bytes_written = device.write(report)
+            time.sleep(0.3)
         except Exception as e:
             print(f"Failed to send data to the device: {e}")
 

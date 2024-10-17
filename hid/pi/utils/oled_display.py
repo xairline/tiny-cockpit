@@ -5,6 +5,7 @@ from board import SCL, SDA
 import busio
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
+from utils import font
 
 
 class OledDisplay:
@@ -19,12 +20,8 @@ class OledDisplay:
         self.image = Image.new("1", (self.width, self.height))
         self.draw = ImageDraw.Draw(self.image)
         self.fontSize = 16
-        self.fontTitle = ImageFont.truetype(
-            "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf", self.fontSize
-        )
-        self.fontData = ImageFont.truetype(
-            "/usr/share/fonts/truetype/DSEG7ModernMini-Regular.ttf", self.fontSize + 2
-        )
+        self.fontTitle = ImageFont.truetype(font.REGULAR_FONT, self.fontSize)
+        self.fontData = ImageFont.truetype(font.NUMBER_FONT, self.fontSize + 2)
         self.fontSeparator = ImageFont.load_default()
         self.padding = -2
         self.top = self.padding
@@ -63,7 +60,7 @@ class OledDisplay:
                     f"{val1}",
                     font=(
                         ImageFont.truetype(
-                            "/usr/share/fonts/truetype/DSEG7ModernMini-Regular.ttf",
+                            font.NUMBER_FONT,
                             self.fontSize * 2.5 + 2,
                         )
                     ),

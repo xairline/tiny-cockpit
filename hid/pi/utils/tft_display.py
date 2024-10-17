@@ -4,7 +4,11 @@ import subprocess
 from board import SCL, SDA
 import busio
 from PIL import Image, ImageDraw, ImageFont
+from utils import font
 import st7735
+
+data_padding_left = 25
+data_padding_top = 15
 
 
 class TftDisplay:
@@ -32,43 +36,58 @@ class TftDisplay:
 
         self.img = Image.new("RGB", (WIDTH, HEIGHT))
         self.draw = ImageDraw.Draw(self.img)
-        self.font_text = ImageFont.truetype(
-            "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf", 20
-        )
-        self.font = ImageFont.truetype(
-            "/usr/share/fonts/truetype/DSEG7ModernMini-Regular.ttf", 40
-        )
-        self.hash = None
+        self.font_text = ImageFont.truetype(font.REGULAR_FONT, 20)
+        self.font = ImageFont.truetype(font.NUMBER_FONT, 35)
+        self.draw.rectangle((0, 0, 128, 128), (0, 0, 0))
+        self.disp.display(self.img)
+        self.hash_title = None
+        self.hash_data = None
 
     def show(self):
         padding = 25
         while True:
             try:
+                draw = False
                 if len(self.msg_buffer) == 0:
                     continue
-                if self.hash == hash(
-                    self.msg_buffer[self.buffer_indicator]
-                    + self.msg_buffer[self.buffer_indicator + 1]
-                ):
-                    continue
-                self.hash = hash(
-                    self.msg_buffer[self.buffer_indicator]
-                    + self.msg_buffer[self.buffer_indicator + 1]
-                )
-                self.draw.rectangle((0, 30, 128, 128), (0, 0, 0))
-                self.draw.text(
-                    (5, 15 + padding),
-                    self.msg_buffer[self.buffer_indicator],
-                    font=self.font_text,
-                    fill=(255, 200, 155),
-                )
-                self.draw.text(
-                    (5, 5 + padding * 2),
-                    self.msg_buffer[self.buffer_indicator + 1],
-                    font=self.font,
-                    fill=(0, 255, 255),
-                )
-                self.disp.display(self.img)
+
+                # handle title display
+                if self.hash_title == hash(self.msg_buffer[self.buffer_indicator]):
+                    pass
+                else:
+                    self.hash_title = hash(self.msg_buffer[self.buffer_indicator])
+                    self.draw.rectangle((5, 5 + padding, 80, 64), (0, 0, 0))
+                    self.draw.text(
+                        (5, 15 + padding),
+                        self.msg_buffer[self.buffer_indicator],
+                        font=self.font_text,
+                    )
+                    draw = True
+
+                # handle data display
+                if self.hash_data == hash(self.msg_buffer[self.buffer_indicator + 1]):
+                    pass
+                else:
+                    self.hash_data = hash(self.msg_buffer[self.buffer_indicator + 1])
+                    self.draw.rectangle(
+                        (
+                            data_padding_left,
+                            data_padding_top + padding * 2,
+                            120,
+                            80 + padding,
+                        ),
+                        (0, 0, 0),
+                    )
+                    self.draw.text(
+                        (data_padding_left, data_padding_top + padding * 2),
+                        self.msg_buffer[self.buffer_indicator + 1],
+                        font=self.font,
+                        fill=(0, 255, 255),
+                    )
+                    draw = True
+
+                if draw:
+                    self.disp.display(self.img)
 
             except Exception as e:
                 print(f"Error: {e}")
