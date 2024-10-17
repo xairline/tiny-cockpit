@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
 from utils import font
 
-data_padding_left = 25
+data_padding_left = 0
 data_padding_top = 15
 
 
@@ -33,45 +33,56 @@ class OledDisplay:
         self.x = 0
         self.buffer_indicator = buffer_indicator
         self.msg_buffer = msg_buffer
-        self.hash = None
+        self.hash_title = None
+        self.hash_data = None
 
     def show(self):
         while True:
             try:
+                draw = False
                 if len(self.msg_buffer) == 0:
                     continue
-                if self.hash == hash(
-                    self.msg_buffer[self.buffer_indicator]
-                    + self.msg_buffer[self.buffer_indicator + 1]
-                ):
-                    continue
-                self.hash = hash(
-                    self.msg_buffer[self.buffer_indicator]
-                    + self.msg_buffer[self.buffer_indicator + 1]
-                )
+
                 title = self.msg_buffer[self.buffer_indicator]
                 val1 = self.msg_buffer[self.buffer_indicator + 1]
-                self.draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
-                self.draw.text(
-                    (self.x, self.top + 0),
-                    f"{title}",
-                    font=self.fontTitle,
-                    fill=255,
-                )
-                self.draw.text(
-                    (self.x + data_padding_left, self.top + self.fontSize + 2),
-                    f"{val1}",
-                    font=(
-                        ImageFont.truetype(
-                            font.NUMBER_FONT,
-                            self.fontSize * 2.5 + 2,
-                        )
-                    ),
-                    fill=255,
-                )
-                # Display image.
-                self.disp.image(self.image)
-                self.disp.show()
+                print(f"Title: {title}, Val1: {val1}")
+
+                # handle title display
+                if self.hash_title == hash(self.msg_buffer[self.buffer_indicator]):
+                    pass
+                else:
+                    self.hash_title = hash(self.msg_buffer[self.buffer_indicator])
+                    self.draw.rectangle((0, 0, 60, 16), 0, 0)
+                    self.draw.text(
+                        (self.x, self.top + 0),
+                        f"{title}",
+                        font=self.fontTitle,
+                        fill=255,
+                    )
+                    draw = True
+
+                if self.hash_data == hash(self.msg_buffer[self.buffer_indicator + 1]):
+                    pass
+                else:
+                    self.hash_data = hash(self.msg_buffer[self.buffer_indicator + 1])
+                    self.draw.rectangle((self.x + data_padding_left, 16, 128, 50), 0, 0)
+                    self.draw.text(
+                        (self.x + data_padding_left, self.top + self.fontSize + 2),
+                        f"{val1}",
+                        font=(
+                            ImageFont.truetype(
+                                font.NUMBER_FONT,
+                                self.fontSize * 2.5 + 2,
+                            )
+                        ),
+                        fill=255,
+                    )
+                    draw = True
+
+                if draw:
+                    self.disp.image(self.image)
+                    self.disp.show()
+
             except Exception as e:
                 print(f"Error: {e}")
                 self.disp.fill(0)
