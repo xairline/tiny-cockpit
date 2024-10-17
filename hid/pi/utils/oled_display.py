@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
 from utils import font
 
-data_padding_left = 40
+data_padding_left = 30
 data_padding_top = 15
 
 
